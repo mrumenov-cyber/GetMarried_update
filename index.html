@@ -1,4 +1,3 @@
-```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -55,33 +54,6 @@
       position:absolute;inset:0;display:none;align-items:center;justify-content:center;
       background:rgba(0,0,0,.8);backdrop-filter:blur(6px);color:#fff;text-align:center;padding:20px
     }
-
-    /* Reveal section */
-    .reveal-wrap{max-width:1000px;width:100%;text-align:center;margin-bottom:20px;}
-    .reveal-btn{
-      background:var(--purple);color:#fff;border:none;padding:14px 28px;border-radius:999px;
-      font-size:16px;font-weight:700;cursor:pointer;
-      box-shadow:0 6px 16px rgba(124,92,255,.25);
-      transition:transform .1s, background .2s;
-    }
-    .reveal-btn:hover{background:var(--purple-dark)}
-    .reveal-btn:active{transform:translateY(1px)}
-
-    /* Unlock panel (shown after click, before 30 mins) */
-    .unlock-panel{
-      max-width:1000px;width:100%;margin:0 0 26px;
-      background:#fff3ff;border:1px solid #f3d3ff;border-radius:14px;
-      padding:16px 18px;display:none;
-    }
-    .unlock-panel h3{margin:0 0 4px;font-size:16px;font-weight:800;color:#4d2048;}
-    .unlock-panel p{margin:4px 0 10px;color:#5a3054}
-    .unlock-timer{
-      display:inline-block;background:#fff;border:1px solid #f7caff;
-      border-radius:999px;padding:6px 14px;font-weight:700;color:#4d2048;
-    }
-
-    /* offers hidden */
-    .hidden-offers{display:none;}
 
     .tiers{
       width:100%;max-width:1000px;margin:0 0 30px;
@@ -154,7 +126,7 @@
     .t-frame::before{content:"";display:block;padding-top:70vh;max-height:820px;min-height:520px;}
     .t-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
-    /* consultation (also hidden) */
+    /* consultation */
     #consultation{max-width:1000px;width:100%;margin:0 0 50px}
     .consult{
       background:#eaf4ff;border:1px solid #c6e2ff;border-radius:14px;padding:22px 24px;text-align:center;line-height:1.45
@@ -194,29 +166,45 @@
     </div>
   </section>
 
-  <!-- Show-me-more step -->
-  <section class="reveal-wrap">
-    <button id="reveal-btn" class="reveal-btn">Show me more 💗</button>
-  </section>
-
-  <!-- Unlock panel (shown after click) -->
-  <section id="unlock-panel" class="unlock-panel">
-    <h3>Stay with me a bit longer 💕</h3>
-    <p>To protect the container and make sure you watch the teaching first, the details, bonuses, and application links unlock after 30 minutes.</p>
-    <div>Time until unlock:</div>
-    <div id="unlock-timer" class="unlock-timer">30:00</div>
-  </section>
-
-  <!-- HIDDEN CONTENT -->
-  <div id="offers-wrapper" class="hidden-offers">
-    <!-- ONLY GOLD / VIP -->
+  <!-- OFFERS (VISIBLE RIGHT AWAY) -->
+  <div id="offers-wrapper">
     <section class="tiers" id="cta-live">
       <div class="card gold">
         <div class="title-wrap">
           <h2><span class="badge gold">TIER 2 PREMIUM</span> Get Married in 1 Year TIER 2 Premium — VIP</h2>
           <div class="crown" aria-hidden="true"></div>
         </div>
+
         <div class="subtitle">Premium access, high-touch mentoring, and powerful momentum — for women ready to be fully supported and accelerated.</div>
+
+        <!-- PURPLE/PINK OFFER BOX -->
+        <div
+          id="price-box"
+          style="
+            background:linear-gradient(135deg,#7c5cff 0%, #ff4da6 100%);
+            border-radius:16px;
+            padding:18px 20px;
+            color:#fff;
+            box-shadow:0 12px 28px rgba(124,92,255,.35), 0 8px 18px rgba(255,77,166,.25);
+            margin:10px 0 6px;
+          "
+        >
+          <div style="font-weight:900;font-size:17px;margin-bottom:6px">
+            Limited-time invitation 💗
+          </div>
+
+          <div style="font-size:14px;opacity:.9">
+            Full value: <span style="text-decoration:line-through;font-weight:700">€2,222</span>
+          </div>
+
+          <div style="margin-top:6px;font-size:22px;font-weight:900">
+            Today: €1,111 (until the timer hits zero)
+          </div>
+
+          <div style="margin-top:6px;font-size:13px;opacity:.85">
+            When the countdown ends, this offer closes automatically.
+          </div>
+        </div>
 
         <div class="features">
           <div class="why-box gold-why">
@@ -297,16 +285,14 @@
   <script>
   // ====== FIXED EXPIRY TIMER (20 Dec 23:59 CET) ======
   // CET in December = UTC+1, so 23:59 CET = 22:59 UTC.
-  // If you need a different year later, change the year below.
+  // Change the year if needed.
   const EXPIRY_UTC_MS = Date.UTC(2025, 11, 20, 22, 59, 0); // YYYY, MM(0-based), DD, HH, MM, SS
 
   const $count = document.getElementById('countdown');
   const $overlay = document.getElementById('expired-overlay');
   const $iframe = document.getElementById('vimeo-iframe');
   const $offersWrapper = document.getElementById('offers-wrapper');
-  const $unlockPanel = document.getElementById('unlock-panel');
-  const $unlockTimer = document.getElementById('unlock-timer');
-  const $revealBtn = document.getElementById('reveal-btn');
+  const $priceBox = document.getElementById('price-box');
 
   let player;
   try { player = new Vimeo.Player($iframe); } catch(e){}
@@ -330,7 +316,14 @@
       $count.textContent = 'Expired';
       $overlay.style.display = 'flex';
       $offersWrapper.style.display = 'none';
-      $unlockPanel.style.display = 'none';
+
+      if($priceBox){
+        $priceBox.innerHTML = `
+          <div style="font-weight:900;font-size:17px;margin-bottom:6px">This invitation has closed 💜</div>
+          <div style="font-size:14px;opacity:.95">Full value of this program is €2,222.</div>
+        `;
+      }
+
       if(player){
         player.pause().catch(()=>{}).finally(()=>{ if(player.unload) player.unload(); });
       }
@@ -338,57 +331,9 @@
       $count.textContent = formatRemaining(remaining);
     }
   }
+
   tick();
   setInterval(tick, 1000);
-
-  // ====== 30-MIN UNLOCK FLOW (LOCAL ONLY) ======
-  const THIRTY_MIN = 30 * 60 * 1000;
-  let userClickedToSeeMore = false;
-  let unlockTime = Date.now() + THIRTY_MIN;
-  let unlocked = false;
-
-  $revealBtn.addEventListener('click', () => {
-    // if expired, do nothing
-    if(Date.now() > EXPIRY_UTC_MS) return;
-
-    userClickedToSeeMore = true;
-    if(unlocked){
-      $offersWrapper.style.display = 'block';
-      window.scrollTo({ top: $offersWrapper.offsetTop - 16, behavior: 'smooth' });
-    } else {
-      $unlockPanel.style.display = 'block';
-      window.scrollTo({ top: $unlockPanel.offsetTop - 12, behavior: 'smooth' });
-    }
-  });
-
-  function updateUnlockTimer(){
-    if(unlocked) return;
-
-    // if expired, hide everything
-    if(Date.now() > EXPIRY_UTC_MS){
-      $unlockPanel.style.display = 'none';
-      $offersWrapper.style.display = 'none';
-      return;
-    }
-
-    const diff = unlockTime - Date.now();
-    if(diff <= 0){
-      unlocked = true;
-      if(userClickedToSeeMore){
-        $offersWrapper.style.display = 'block';
-        $unlockPanel.style.display = 'none';
-        window.scrollTo({ top: $offersWrapper.offsetTop - 16, behavior: 'smooth' });
-      } else {
-        $unlockTimer.textContent = 'Unlocked — click “Show me more”';
-      }
-      return;
-    }
-    const mins = Math.floor(diff / 60000);
-    const secs = Math.floor((diff % 60000) / 1000);
-    $unlockTimer.textContent = pad(mins) + ':' + pad(secs);
-  }
-  setInterval(updateUnlockTimer, 1000);
   </script>
 </body>
 </html>
-```
